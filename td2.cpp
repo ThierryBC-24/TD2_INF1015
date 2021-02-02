@@ -1,4 +1,10 @@
-﻿#pragma region "Includes"//{
+﻿// Programme qui détermine si une année lue du clavier est bissextile.
+// file   bissextile.cpp
+// author Bédard-Cortey et Li
+// date 14 février 2021
+// Créé le 29 janvier 2021
+
+#pragma region "Includes"//{
 #define _CRT_SECURE_NO_WARNINGS // On permet d'utiliser les fonctions de copies de chaînes qui sont considérées non sécuritaires.
 
 #include "structures.hpp"      // Structures de données pour la collection de films en mémoire.
@@ -48,22 +54,76 @@ string lireString(istream& fichier)
 #pragma endregion//}
 
 //TODO: Une fonction pour ajouter un Film à une ListeFilms, le film existant déjà; on veut uniquement ajouter le pointeur vers le film existant.  Cette fonction doit doubler la taille du tableau alloué, avec au minimum un élément, dans le cas où la capacité est insuffisante pour ajouter l'élément.  Il faut alors allouer un nouveau tableau plus grand, copier ce qu'il y avait dans l'ancien, et éliminer l'ancien trop petit.  Cette fonction ne doit copier aucun Film ni Acteur, elle doit copier uniquement des pointeurs.
+void ajouterFilm(ListeFilms liste, Film* film) {
+	if (liste.capacite == liste.nElements) {
+			if (liste.capacite == 0)
+				liste.capacite = 1;
 
-//TODO: Une fonction pour enlever un Film d'une ListeFilms (enlever le pointeur) sans effacer le film; la fonction prenant en paramètre un pointeur vers le film à enlever.  L'ordre des films dans la liste n'a pas à être conservé.
-
-//TODO: Une fonction pour trouver un Acteur par son nom dans une ListeFilms, qui retourne un pointeur vers l'acteur, ou nullptr si l'acteur n'est pas trouvé.  Devrait utiliser span.
-
-//TODO: Compléter les fonctions pour lire le fichier et créer/allouer une ListeFilms.  La ListeFilms devra être passée entre les fonctions, pour vérifier l'existence d'un Acteur avant de l'allouer à nouveau (cherché par nom en utilisant la fonction ci-dessus).
-Acteur* lireActeur(istream& fichier)
-{
-	Acteur acteur = {};
-	acteur.nom            = lireString(fichier);
-	acteur.anneeNaissance = lireUint16 (fichier);
-	acteur.sexe           = lireUint8  (fichier);
-	return {}; //TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
+			Film** nouveauTableau = new Film*[liste.capacite *= 2];
+			for (int i : range(liste.nElements))
+				*nouveauTableau[i] = *liste.elements[i];
+			delete[] *liste.elements;
+			liste.elements = nouveauTableau;
+	}
+	liste.elements[liste.nElements++] = film;
 }
 
-Film* lireFilm(istream& fichier)
+//TODO: Une fonction pour enlever un Film d'une ListeFilms (enlever le pointeur) sans effacer le film; la fonction prenant en paramètre un pointeur vers le film à enlever.  L'ordre des films dans la liste n'a pas à être conservé.
+void enleverFilm(ListeFilms liste, Film* film) {
+	for (int i : range(liste.nElements)) {
+		if (liste.elements[i] == film) {
+			delete liste.elements[i];
+			liste.nElements--;
+		}
+	}
+}
+
+
+//TODO: Une fonction pour trouver un Acteur par son nom dans une ListeFilms, qui retourne un pointeur vers l'acteur, ou nullptr si l'acteur n'est pas trouvé.  Devrait utiliser span.
+Acteur* trouverActeur(ListeFilms liste, string nom) {
+	Acteur* acteurTrouve = nullptr;
+	for (int i : range(liste.nElements)) {
+		for (int j : range(liste.elements[i]->acteurs.nElements)) {
+			if (liste.elements[i]->acteurs.elements[j]->nom == nom)
+				acteurTrouve = liste.elements[i]->acteurs.elements[j];
+		}
+	}
+	return acteurTrouve;
+}
+
+
+//TODO: Compléter les fonctions pour lire le fichier et créer/allouer une ListeFilms.  La ListeFilms devra être passée entre les fonctions, pour vérifier l'existence d'un Acteur avant de l'allouer à nouveau (cherché par nom en utilisant la fonction ci-dessus).
+Acteur* lireActeur(ListeFilms liste, istream& fichier)
+{
+	Acteur acteur = {};
+	acteur.nom = lireString(fichier);
+	acteur.anneeNaissance = lireUint16(fichier);
+	acteur.sexe = lireUint8(fichier);
+
+	//TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
+	if (trouverActeur(liste, acteur.nom) == nullptr) {
+		cout << "Nouvel acteur crée : " << acteur.nom << "\n";
+		return &acteur;
+	}
+	else
+		return trouverActeur(liste, acteur.nom);
+}
+
+void ajouterActeur(ListeActeurs liste, Acteur* acteur) {
+	if (liste.capacite == liste.nElements) {
+		if (liste.capacite == 0)
+			liste.capacite = 1;
+
+		Acteur** nouveauTableau = new Acteur*[liste.capacite *= 2];
+		for (int i : range(liste.nElements))
+			*nouveauTableau[i] = *liste.elements[i];
+		delete[] * liste.elements;
+		liste.elements = nouveauTableau;
+	}
+	liste.elements[liste.nElements++] = acteur;
+}
+
+Film* lireFilm(ListeFilms liste, istream& fichier)
 {
 	Film film = {};
 	film.titre       = lireString(fichier);
@@ -72,10 +132,18 @@ Film* lireFilm(istream& fichier)
 	film.recette     = lireUint16 (fichier);
 	film.acteurs.nElements = lireUint8 (fichier);  //NOTE: Vous avez le droit d'allouer d'un coup le tableau pour les acteurs, sans faire de réallocation comme pour ListeFilms.  Vous pouvez aussi copier-coller les fonctions d'allocation de ListeFilms ci-dessus dans des nouvelles fonctions et faire un remplacement de Film par Acteur, pour réutiliser cette réallocation.
 	for (int i = 0; i < film.acteurs.nElements; i++) {
-		lireActeur(fichier); //TODO: Placer l'acteur au bon endroit dans les acteurs du film.
+		//TODO: Placer l'acteur au bon endroit dans les acteurs du film.
+		ajouterActeur(film.acteurs, lireActeur(liste, fichier));
+
+		///*for (int j : range(lireActeur(liste, fichier)->joueDans.nElements)) {
+		//	if (lireActeur(liste, fichier)->joueDans.elements[j]->titre == film.titre)*/
+		//		ajouterActeur(film.acteurs, lireActeur(liste, fichier));
+		//}
+
 		//TODO: Ajouter le film à la liste des films dans lesquels l'acteur joue.
+		ajouterFilm(lireActeur(liste, fichier)->joueDans, &film);
 	}
-	return {}; //TODO: Retourner le pointeur vers le nouveau film.
+	return &film; //TODO: Retourner le pointeur vers le nouveau film.
 }
 
 ListeFilms creerListe(string nomFichier)
