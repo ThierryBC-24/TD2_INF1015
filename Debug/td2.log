@@ -1,0 +1,6 @@
+﻿  bibliotheque_cours.cpp
+C:\Users\Haowen\Documents\GitHub\TD2_INF1015\CodeCoverage_bugfix.h(6,11): fatal error C1083: Impossible d'ouvrir le fichier include : 'CodeCoverage/CodeCoverage.h' : No such file or directory
+  td2.cpp
+C:\Users\Haowen\Documents\GitHub\TD2_INF1015\td2.cpp(58,4): error C2065: 'É' : identificateur non déclaré
+  verification_allocation.cpp
+  Génération de code en cours...
