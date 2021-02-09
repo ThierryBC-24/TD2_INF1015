@@ -1,0 +1,2 @@
+C:\Users\Haowen\Documents\GitHub\TD2_INF1015\Debug\td2.exe
+C:\Users\Haowen\Documents\GitHub\TD2_INF1015\Debug\td2.pdb

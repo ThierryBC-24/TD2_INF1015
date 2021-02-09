@@ -3,7 +3,7 @@
 // par Francois-R.Boyer@PolyMtl.ca
 
 #ifdef _MSC_VER
-# include <CodeCoverage/CodeCoverage.h>
+#include<CodeCoverage/CodeCoverage.h>
 // Voir CODE_COVERAGE_FILTER dans le .h ci-dessus, il y a une erreur, il retourne un pointeur non const vers un littéral "...".
 # ifndef CODE_COVERAGE_DISABLE_ALL_FILTERS
 #  undef CODE_COVERAGE_FILTER
