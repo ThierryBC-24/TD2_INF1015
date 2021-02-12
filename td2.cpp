@@ -60,6 +60,7 @@ void ajouterFilm(ListeFilms& listeFilms, Film* film) {
 	if (listeFilms.capacite <= 0) {
 		listeFilms.capacite = 3;
 		Film** nouveauTableau = new Film * [listeFilms.capacite];
+		delete listeFilms.elements;
 		listeFilms.elements = nouveauTableau;
 	}
 	else {
@@ -137,10 +138,6 @@ Film* lireFilm(ListeFilms listeFilms, istream& fichier)
 
 		film.acteurs.elements[i] = ptracteur;
 
-		///*for (int j : range(lireActeur(liste, fichier)->joueDans.nElements)) {
-		//	if (lireActeur(liste, fichier)->joueDans.elements[j]->titre == film.titre)*/
-		//		ajouterActeur(film.acteurs, lireActeur(liste, fichier));
-		//}
 
 		//TODO: Ajouter le film à la liste des films dans lesquels l'acteur joue.
 		ajouterFilm(ptracteur->joueDans, new Film(film));
@@ -163,7 +160,6 @@ ListeFilms creerListe(string nomFichier)
 		toAdd = lireFilm(listFilm, fichier); //TODO: Ajouter le film à la liste.
 		ajouterFilm(listFilm, toAdd);
 	}
-	
 	return listFilm; //TODO: Retourner la liste de films.
 }
 
@@ -173,7 +169,7 @@ void detruireFilm(ListeFilms& listeFilms, string film) {
 	for (int i : range(listeFilms.nElements)) {
 		if (listeFilms.elements[i]->titre == film) {
 			for (int j : range(listeFilms.elements[i]->acteurs.nElements)) {
-				/*if (listeFilms.elements[i]->acteurs.nElements == 1) {
+				if (listeFilms.elements[i]->acteurs.nElements == 1) {
 					delete listeFilms.elements[i]->acteurs.elements[j];
 					cout << "Acteur détruit: " << listeFilms.elements[i]->acteurs.elements[j]->nom << endl;
 				}
@@ -186,7 +182,7 @@ void detruireFilm(ListeFilms& listeFilms, string film) {
 							break;
 						}
 					}
-				}*/
+				}
 			}
 			delete listeFilms.elements[i];
 			temp = i;
@@ -204,11 +200,11 @@ void detruireFilm(ListeFilms& listeFilms, string film) {
 }
 
 //TODO: Une fonction pour détruire une ListeFilms et tous les films qu'elle contient.
-void detruireListe(ListeFilms* listeFilms) {
-	for (int i = 0; i < listeFilms->nElements;i++) {
-		detruireFilm(*listeFilms, listeFilms->elements[i]->titre);
+void detruireListe(ListeFilms& listeFilms) {
+	for (int i = 0; i < listeFilms.nElements;i++) {
+		detruireFilm(listeFilms, listeFilms.elements[i]->titre);
 	}
-	delete listeFilms;
+	delete[] listeFilms.elements;
 }
 
 void afficherActeur(const Acteur& acteur)
@@ -287,5 +283,5 @@ int main()
 	//TODO: Faire les appels qui manquent pour avoir 0% de lignes non exécutées dans le programme (aucune ligne rouge dans la couverture de code; c'est normal que les lignes de "new" et "delete" soient jaunes).  Vous avez aussi le droit d'effacer les lignes du programmes qui ne sont pas exécutée, si finalement vous pensez qu'elle ne sont pas utiles.
 	
 	//TODO: Détruire tout avant de terminer le programme.  L'objet verifierFuitesAllocations devrait afficher "Aucune fuite detectee." a la sortie du programme; il affichera "Fuite detectee:" avec la liste des blocs, s'il manque des delete.
-	detruireListe(&listeFilms);
+	detruireListe(listeFilms);
 }
