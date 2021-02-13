@@ -1,0 +1,2 @@
+C:\Users\Thierry\Desktop\Génie Logiciel\Session 2\INF1015 (POO)\TD\TD2_INF1015\Debug\td2.exe
+C:\Users\Thierry\Desktop\Génie Logiciel\Session 2\INF1015 (POO)\TD\TD2_INF1015\Debug\td2.pdb
