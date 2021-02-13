@@ -78,7 +78,7 @@ void enleverFilm(ListeFilms& listeFilms, Film* film) {
 	for (int i = 0; i < listeFilms.nElements; i++) {
 		if (listeFilms.elements[i]->titre == film->titre) {
 			listeFilms.elements[i] = listeFilms.elements[--listeFilms.nElements];
-			listeFilms.elements[listeFilms.nElements] = nullptr;
+			listeFilms.elements[--listeFilms.nElements] = nullptr;
 			listeFilms.nElements--;
 			i = listeFilms.nElements;
 		}
@@ -145,12 +145,12 @@ ListeFilms creerListe(string nomFichier)
 	int nElements = lireUint16(fichier);
 
 	//TODO: Créer une liste de films vide.
-	ListeFilms listFilm = {};
+	ListeFilms listeFilms = {};
 	for (int i = 0; i < nElements; i++) {
 		//TODO: Ajouter le film à la liste.
-		ajouterFilm(listFilm, lireFilm(listFilm, fichier));
+		ajouterFilm(listeFilms, lireFilm(listeFilms, fichier));
 	}
-	return listFilm; //TODO: Retourner la liste de films.
+	return listeFilms; //TODO: Retourner la liste de films.
 }
 
 //TODO: Une fonction pour détruire un film (relâcher toute la mémoire associée à ce film, et les acteurs qui ne jouent plus dans aucun films de la collection).  Noter qu'il faut enleve le film détruit des films dans lesquels jouent les acteurs.  Pour fins de débogage, affichez les noms des acteurs lors de leur destruction.
@@ -162,8 +162,8 @@ void detruireFilm(ListeFilms& listeFilms, string titreFilm) {
 				int nElementJoueDans = listeFilms.elements[i]->acteurs.elements[j]->joueDans.nElements;
 				for (int k : range(nElementJoueDans)) {
 					if (listeFilms.elements[i]->acteurs.elements[j]->joueDans.elements[k]->titre == titreFilm) {
-						//enleverFilm(listeFilms, listeFilms.elements[i]->acteurs.elements[j]->joueDans.elements[k]);
-						delete listeFilms.elements[i]->acteurs.elements[j]->joueDans.elements[k];
+						enleverFilm(listeFilms, listeFilms.elements[i]->acteurs.elements[j]->joueDans.elements[k]);
+						//delete listeFilms.elements[i]->acteurs.elements[j]->joueDans.elements[k];
 						listeFilms.elements[i]->acteurs.elements[j]->joueDans.nElements--;
 						if (listeFilms.elements[i]->acteurs.elements[j]->joueDans.nElements == 0) {
 							cout << "Acteur détruit: " << listeFilms.elements[i]->acteurs.elements[j]->nom << endl;
