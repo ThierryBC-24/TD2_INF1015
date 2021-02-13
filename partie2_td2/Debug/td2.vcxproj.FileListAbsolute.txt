@@ -1,0 +1,2 @@
+C:\Users\Haowen\source\repos\partie2_td2\Debug\td2.exe
+C:\Users\Haowen\source\repos\partie2_td2\Debug\td2.pdb
